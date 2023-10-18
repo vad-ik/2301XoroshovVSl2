@@ -34,11 +34,16 @@ void say(int arr[]) {
 
 
  void insertionSort(int arr[]) {
-     for (int i = 0; i < size; i++)
+     for (int i = 0 ; i < size; i++)
      {
-         for (int j = i; j > 0 && arr[j - 1] > arr[j]; j--) {
-             swap(arr[j], arr[j - 1]);
+         int temp = arr[i];
+         int j = i - 1;
+         while (j >= 0 && arr[j] > temp)
+         {
+             arr[j + 1] = arr[j];
+             j--;
          }
+         arr[j + 1] = temp;
      }
  }
 
@@ -147,6 +152,58 @@ void quickSort(int arr[], int low, int high) {
     }
 }
 
+void quickSortMedian(int arr[], int low, int high) {
+    if (high - low > 2)//сортируем более 3 элементов
+    {
+        
+        int id = (low + high) / 2;//выбираем ~средний элемент
+        if (arr[low] >= arr[high] && arr[low] <= arr[id]|| arr[low]>= arr[id] && arr[low] <= arr[high]) {
+            id = low;
+        }
+        else if (arr[high] >= arr[low] && arr[high] <= arr[id] || arr[high]>= arr[id] && arr[high] <= arr[low]) {
+            id = high;
+        }
+        
+        int counter = 0;
+        int member;
+        for (int i = low; i <= high; i++)
+        {
+            if (arr[id] > arr[i]) {
+                counter++;//считаем кол-во эл меньше выбранного
+            }
+        }
+
+        swap(arr[id], arr[low + counter]);//ставим выбранный элемент между меньшими и большими числами
+
+
+        int j = low;
+        for (int i = low; i <= high; i++)//все числа меньше переставляем влево, все больше вправо
+        {
+            if (arr[low + counter] > arr[i]) {
+                swap(arr[j], arr[i]);
+                j++;
+            }
+        }
+
+        if (counter == 0)
+        {
+            quickSort(arr, low + counter + 1, high);
+        }
+        else
+        {
+            quickSort(arr, low, low + counter - 1);
+            quickSort(arr, low + counter, high);
+
+        }
+
+    }
+    else{//если сортируем 3 эл проверяем их
+        if (arr[low] > arr[high - 1]) swap(arr[high - 1], arr[low]);
+        if (arr[low+1] > arr[high ]) swap(arr[high ], arr[low+1]);
+        if (arr[low] > arr[high - 1]) swap(arr[high - 1], arr[low]);
+
+    }
+}
 void shellSortDel2(int arr[])
 {
     for (int step = size / 2; step > 0; step /= 2)//перебор всех шагов
@@ -213,6 +270,8 @@ void shellSortTsiura(int arr[])
     return n ;
 }
 
+
+
  // Сортируем массив `arr[low…high]`, используя вспомогательный массив `aux`
  void Timsort(int arr[], int aux[], int low, int high, int minRunInsert)
  {
@@ -220,10 +279,8 @@ void shellSortTsiura(int arr[])
      // базовый вариант
      if (high - low > minRunInsert) {        // если размер прогона <= 1
 
-
-
          // найти середину
-         int mid = (low + ((high - low) >> 1));
+         int mid = (low + high) >> 1;
 
          // рекурсивно разделяем прогоны на две половины до тех пор, пока размер прогона не станет <= 1,
          // затем объединяем их и возвращаемся вверх по цепочке вызовов
@@ -233,15 +290,19 @@ void shellSortTsiura(int arr[])
          Merge(arr, aux, low, mid, high);        // объединить два полупрогона.
      }
      else
-     {
-         for (int i = low; i <= high; i++)
+     {         
+         for (int i = low ; i < high; i++)
          {
-             for (int j = i; j > 0 && arr[j - 1] > arr[j]; j--) {
-                 swap(arr[j - 1], arr[j]);
+             int temp = arr[i];
+             int j = i - 1;
+             while (j >= low && arr[j] > temp)
+             {
+                 arr[j + 1] = arr[j];
+                 j--;
              }
+             arr[j + 1] = temp;
          }
      }
-
  }
 
 
@@ -360,40 +421,46 @@ void shellSortTsiura(int arr[])
      }
  }
 
- void creatSorted(int arr[]) {
+ void creatSorted(int* arr) {
  //выбираем какой вид заполнения масива
     
-   
+   /*
      for (int i = 0; i < size; i++)
      {
          arr[i] = i;
-     }
-    /*  swap(arr[size/2] , arr[size/2+1]);//для Почти отсортированного массива 
-     
+     } 
+     */
+     // swap(arr[size/2] , arr[size/2+1]);//для Почти отсортированного массива 
+    
+
       for (int i = 0; i < size; i++)
      {
          arr[i] = size-i;
      }
-     arr = aray;//случайный
-     */
+     
+     //arr = aray;//случайный масив
+     
  }
 
 int main()
 {
 
-
     srand(time(0));
-     aray=new int[size];
+    aray = new int[size];
     int arr[size];
     int arr2[size];//некоторые сортировки требуют вспомогательный массив
-    for (int i= 0; i <size; i++)
+    for (int i = 0; i < size; i++)
     {
         aray[i] = rand();
     }
-    
+
+
     auto begin = steady_clock::now();
     auto end = steady_clock::now();
+   
     
+
+       
     creatSorted(arr);
     begin = steady_clock::now();
     selectionSort(arr);
@@ -419,13 +486,13 @@ int main()
     mergesort(arr, arr2, 0, size - 1);
     end = steady_clock::now();
     std::cout << duration_cast<microseconds>(end - begin).count() << " \n";
-
+/*
     creatSorted(arr);
     begin = steady_clock::now();
     quickSort(arr, 0, size - 1);
     end = steady_clock::now();
     std::cout << duration_cast<microseconds>(end - begin).count() << " \n";
-
+*/
     creatSorted(arr);
     begin = steady_clock::now();
     shellSortDel2(arr);
@@ -451,7 +518,7 @@ int main()
     Timsort(arr, arr2, 0, size - 1, getMinRunInsert(size));
     end = steady_clock::now();
     std::cout << duration_cast<microseconds>(end - begin).count() << " \n";
-
+   
     creatSorted(arr);
     begin = steady_clock::now();
     pyramidSort(arr, size);
