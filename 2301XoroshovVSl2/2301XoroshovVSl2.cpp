@@ -2,22 +2,35 @@
 #include <iostream>
 using namespace std;
 #include <chrono>
-# define size 100000
+#include <stack>
+# define sizeArr 100000
 using namespace std::chrono;
 int* aray;
 
 void say(int arr[]) {
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < sizeArr; i++)
     {
         cout << arr[i]<<" ";
     }
+    cout << "\n";
+}
+
+
+void say(stack<int> stack) {
+    cout << stack.size() << " ";
+    while (!stack.empty())
+    {
+        cout << stack.top() << " ";
+        stack.pop();
+    }
+    cout << "\n";
 }
  void selectionSort(int arr[]) {
     int min, minId=0;
    
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < sizeArr; i++)
     { min = arr[i];
-        for (int j = i; j < size;j++)
+        for (int j = i; j < sizeArr;j++)
         {
             if (min> arr[j])
             {
@@ -34,7 +47,7 @@ void say(int arr[]) {
 
 
  void insertionSort(int arr[]) {
-     for (int i = 0 ; i < size; i++)
+     for (int i = 0 ; i < sizeArr; i++)
      {
          int temp = arr[i];
          int j = i - 1;
@@ -50,9 +63,9 @@ void say(int arr[]) {
  void bubbleSort(int arr[]) {
      int memery;
      bool flag = true;
-     for (int i = 0; i < size - 1&&flag; i++) {
+     for (int i = 0; i < sizeArr - 1&&flag; i++) {
          flag = false;
-         for (int j = 0; j < size - i - 1; j++) {
+         for (int j = 0; j < sizeArr - i - 1; j++) {
              if (arr[j] > arr[j + 1]) {
                  swap(arr[j], arr[j+1]);
                  flag = true;
@@ -206,9 +219,9 @@ void quickSortMedian(int arr[], int low, int high) {
 }
 void shellSortDel2(int arr[])
 {
-    for (int step = size / 2; step > 0; step /= 2)//перебор всех шагов
+    for (int step = sizeArr / 2; step > 0; step /= 2)//перебор всех шагов
     {
-        for (int i = step; i < size; i += 1)//перебор всех наборов с данным шагом
+        for (int i = step; i < sizeArr; i += 1)//перебор всех наборов с данным шагом
         {
             int temp = arr[i];
             int j;
@@ -224,10 +237,10 @@ void shellSortDel2(int arr[])
 
 void shellSortPow(int arr[])
 {
-    for (int istep = 1; 2 * istep - 1 < size;  istep++)//перебор всех шагов
+    for (int istep = 1; 2 * istep - 1 < sizeArr;  istep++)//перебор всех шагов
     {
         int step = 2 * istep - 1;
-        for (int i = step; i < size; i += 1)//перебор всех наборов с данным шагом
+        for (int i = step; i < sizeArr; i += 1)//перебор всех наборов с данным шагом
         {
             int temp = arr[i];
             int j;
@@ -246,10 +259,10 @@ void shellSortTsiura(int arr[])
     for (int istep = 0; istep<9; istep++)//перебор всех шагов
     {
         int step = stepArr[istep];
-        if (step<size/2+1)
+        if (step<sizeArr/2+1)
         {
             
-            for (int i = step; i < size; i += 1)//перебор всех наборов с данным шагом
+            for (int i = step; i < sizeArr; i += 1)//перебор всех наборов с данным шагом
             {
                 int temp = arr[i];
                 int j;
@@ -270,38 +283,169 @@ void shellSortTsiura(int arr[])
     return n ;
 }
 
+ void MergeTimsort(int arr[], int aux[], int low, int mid, int high) {
+     int leftL = low;
+     int rightL= mid-1;
+     int serch = arr[mid];
+     while (leftL < rightL&& rightL - leftL>1)
+     {
+         int mid = (rightL + leftL) / 2;
+         if (arr[mid] == serch)
+         {
+             leftL = mid;
+         }
+         else if (arr[mid] < serch)
+         {
+             leftL = mid + 1;
+         }
+         else
+         {
+             rightL = mid - 1;
+         }
+     }
+
+     int leftR = mid;
+     int rightR = high;
+      serch = arr[mid-1];
+     while (leftR < rightR && rightR - leftR>1)
+     {
+         int mid = (rightR + leftR) / 2;
+         if (arr[mid] == serch)
+         {
+             leftR = mid;
+         }
+         else if (arr[mid] < serch)
+         {
+             leftR = mid + 1;
+         }
+         else
+         {
+             rightR = mid - 1;
+         }
+     } 
+    Merge(arr, aux, leftL, mid-1, rightR);
+           
+ }
+ void StacRecursTimSort(int arr[], int aux[], int minRunInsert, stack<int> &stack, int step,int i) {
+    
+    
 
 
+ int first, second, third;
+         switch (stack.size())
+         {
+         case 1:
+             break;
+         case 2:
+             first = stack.top();
+             stack.pop();
+             second = stack.top();
+             stack.pop();
+
+             if (first >= second)//не удовлетворяет первому правилу
+             {
+               
+                 MergeTimsort(arr, aux, minRunInsert * (step - i-1), minRunInsert * (step - i- 1)+ first, minRunInsert * (step - i - 1)+ first + second-1);
+                 
+                 stack.push(first + second);
+             }
+             else
+             {
+                 stack.push(second);
+                 stack.push(first);
+             }
+             break;
+         default:
+            
+             first = stack.top();
+             stack.pop();
+             second = stack.top();
+             stack.pop();
+             third = stack.top();
+             stack.pop();
+
+                     
+             if (first >= second || second >= third || first + second >= third)//не удовлетворяет правилам
+             {
+                 if (first >= third)
+                 {
+                      MergeTimsort(arr, aux, minRunInsert * (step - i - 1), minRunInsert * (step - i - 1)+ first, minRunInsert * (step - i - 1) + first + second-1);
+                     stack.push(third);
+                     stack.push(first+ second);
+                     StacRecursTimSort(arr, aux, minRunInsert, stack,step, i);//проверить следующие группы на несоблюдение правил
+                 }
+                 else
+                 {
+                     
+                     MergeTimsort(arr, aux, minRunInsert * (step - i - 1)+ first, minRunInsert * (step - i - 1)+ first + second, minRunInsert * (step - i - 1)+ first + second + third-1);
+                     stack.push(third + second);
+                     stack.push(first);
+                     StacRecursTimSort(arr, aux, minRunInsert, stack,step, i);//проверить следующие группы на несоблюдение правил
+                 }
+             }
+             else
+             {
+                 stack.push(third);
+                 stack.push(second);
+                 stack.push(first);
+             }
+             break;
+         }
+     
+ }
  // Сортируем массив `arr[low…high]`, используя вспомогательный массив `aux`
- void Timsort(int arr[], int aux[], int low, int high, int minRunInsert)
+ void Timsort(int arr[], int aux[],int size, int minRunInsert)
  {
 
-     // базовый вариант
-     if (high - low > minRunInsert) {        // если размер прогона <= 1
-
-         // найти середину
-         int mid = (low + high) >> 1;
-
-         // рекурсивно разделяем прогоны на две половины до тех пор, пока размер прогона не станет <= 1,
-         // затем объединяем их и возвращаемся вверх по цепочке вызовов
-
-         Timsort(arr, aux, low, mid, minRunInsert);          // разделить/объединить левую половину
-         Timsort(arr, aux, mid + 1, high, minRunInsert);     // разделить/объединить правую половину
-         Merge(arr, aux, low, mid, high);        // объединить два полупрогона.
-     }
-     else
-     {         
-         for (int i = low ; i < high; i++)
+    int FersteEementLastRun = size - (size % minRunInsert);
+     for (int segment = 0; segment < FersteEementLastRun; segment+= minRunInsert)//сортируем отрезки
+     {
+         for (int i = segment; i < segment+ minRunInsert; i++)
          {
              int temp = arr[i];
              int j = i - 1;
-             while (j >= low && arr[j] > temp)
+             while (j >= segment && arr[j] > temp)
              {
                  arr[j + 1] = arr[j];
                  j--;
              }
              arr[j + 1] = temp;
          }
+     }
+     
+     
+     for (int i = FersteEementLastRun; i < size; i++)
+     {
+         int temp = arr[i];
+         int j = i - 1;
+         while (j >= FersteEementLastRun && arr[j] > temp)
+         {
+             arr[j + 1] = arr[j];
+             j--;
+         }
+         arr[j + 1] = temp;
+     }
+     stack<int> stack;
+     int step = sizeArr / minRunInsert;
+     if (sizeArr % minRunInsert != 0) {
+         stack.push(sizeArr % minRunInsert);
+
+     }
+
+     for (int i = 0; i < step; i++)
+     {
+
+         stack.push(minRunInsert);//все отрезки, кроме последнего, изначально одного размера
+         StacRecursTimSort(arr, aux, minRunInsert, stack,step,i);
+     }
+     while (stack.size()>1)
+     {
+        int first = stack.top();
+         stack.pop();
+        int second = stack.top();
+         stack.pop();
+         MergeTimsort(arr, aux, size - second - first, size- second, size -1);
+         stack.push(first + second);
      }
  }
 
@@ -433,9 +577,9 @@ void shellSortTsiura(int arr[])
      // swap(arr[size/2] , arr[size/2+1]);//для Почти отсортированного массива 
     
 
-      for (int i = 0; i < size; i++)
+      for (int i = 0; i < sizeArr; i++)
      {
-         arr[i] = size-i;
+         arr[i] = sizeArr-i;
      }
      
      //arr = aray;//случайный масив
@@ -446,10 +590,10 @@ int main()
 {
 
     srand(time(0));
-    aray = new int[size];
-    int arr[size];
-    int arr2[size];//некоторые сортировки требуют вспомогательный массив
-    for (int i = 0; i < size; i++)
+    aray = new int[sizeArr];
+    int arr[sizeArr];
+    int arr2[sizeArr];//некоторые сортировки требуют вспомогательный массив
+    for (int i = 0; i < sizeArr; i++)
     {
         aray[i] = rand();
     }
@@ -459,7 +603,7 @@ int main()
     auto end = steady_clock::now();
    
     
-
+/*
        
     creatSorted(arr);
     begin = steady_clock::now();
@@ -483,9 +627,10 @@ int main()
     creatSorted(arr);
     creatSorted(arr2);
     begin = steady_clock::now();
-    mergesort(arr, arr2, 0, size - 1);
+    mergesort(arr, arr2, 0, sizeArr - 1);
     end = steady_clock::now();
     std::cout << duration_cast<microseconds>(end - begin).count() << " \n";
+    */
 /*
     creatSorted(arr);
     begin = steady_clock::now();
@@ -493,6 +638,7 @@ int main()
     end = steady_clock::now();
     std::cout << duration_cast<microseconds>(end - begin).count() << " \n";
 */
+    /*
     creatSorted(arr);
     begin = steady_clock::now();
     shellSortDel2(arr);
@@ -511,24 +657,25 @@ int main()
     shellSortTsiura(arr);
     end = steady_clock::now();
     std::cout << duration_cast<microseconds>(end - begin).count() << " \n";
-
+*/
     creatSorted(arr);
     creatSorted(arr2);
     begin = steady_clock::now();
-    Timsort(arr, arr2, 0, size - 1, getMinRunInsert(size));
+    Timsort(arr, arr2,  sizeArr , getMinRunInsert(sizeArr));
     end = steady_clock::now();
     std::cout << duration_cast<microseconds>(end - begin).count() << " \n";
    
+   /*
     creatSorted(arr);
     begin = steady_clock::now();
-    pyramidSort(arr, size);
+    pyramidSort(arr, sizeArr);
     end = steady_clock::now();
     std::cout << duration_cast<microseconds>(end - begin).count() << " \n";
     
     creatSorted(arr);
     begin = steady_clock::now();
-    IntroSort(arr, 0, size - 1, 0, log(size));
+    IntroSort(arr, 0, sizeArr - 1, 0, log(sizeArr));
     end = steady_clock::now();
     std::cout << duration_cast<microseconds>(end - begin).count() << " \n";
-    
+    */
 }
