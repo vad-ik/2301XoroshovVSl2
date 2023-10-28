@@ -237,19 +237,19 @@ void shellSortDel2(int arr[], int sizeArr)
 
 void shellSortPow(int arr[],int sizeArr)
 {
-    int ferstStep = sizeArr;
+    int firstStep = sizeArr;
    
     for (int i = 8*sizeof(int); i>=0 ; i--)
     {
         int powN = pow(2, i);
         if ((sizeArr&powN)!=0)
         {
-            ferstStep = powN;
+            firstStep = powN;
             break;
         }
     }
 
-    for (int step = ferstStep; step > 1;  step=(step+1)/2)//перебор всех шагов
+    for (int step = firstStep; step > 1;  step=(step+1)/2)//перебор всех шагов
     {
       
         for (int i = step; i < sizeArr; i += 1)//перебор всех наборов с данным шагом
@@ -419,8 +419,8 @@ void shellSortTsiura(int arr[],int sizeArr)
  void Timsort(int arr[], int aux[],int size, int minRunInsert)
  {
 
-    int FersteEementLastRun = size - (size % minRunInsert);
-     for (int segment = 0; segment < FersteEementLastRun; segment+= minRunInsert)//сортируем отрезки
+    int FirsteEementLastRun = size - (size % minRunInsert);
+     for (int segment = 0; segment < FirsteEementLastRun; segment+= minRunInsert)//сортируем отрезки
      {
          for (int i = segment; i < segment+ minRunInsert; i++)
          {
@@ -436,11 +436,11 @@ void shellSortTsiura(int arr[],int sizeArr)
      }
      
      
-     for (int i = FersteEementLastRun; i < size; i++)
+     for (int i = FirsteEementLastRun; i < size; i++)
      {
          int temp = arr[i];
          int j = i - 1;
-         while (j >= FersteEementLastRun && arr[j] > temp)
+         while (j >= FirsteEementLastRun && arr[j] > temp)
          {
              arr[j + 1] = arr[j];
              j--;
@@ -654,7 +654,10 @@ void shellSortTsiura(int arr[],int sizeArr)
      }
      else if (tupe == 4)
      {
-         arr = aray;//случайный масив
+         for (int i = 0; i < sizeArr; i++)
+         {
+             arr[i] = aray[i];
+         }//случайный масив
      }
  
  }
@@ -665,15 +668,15 @@ void shellSortTsiura(int arr[],int sizeArr)
     srand(time(0));
 
 
-    int startSizeArr = 10000;//стартовый массив
-    int finishSizeArr = 100000;//конечный массив
+    int startSizeArr = 20;//стартовый массив
+    int finishSizeArr = 200;//конечный массив
     int sizeArr = startSizeArr;
 
-    aray = (int*)malloc(sizeArr * sizeof(int));
+    aray = (int*)malloc(finishSizeArr * sizeof(int));
     int* arr=(int*) malloc(sizeArr * sizeof(int));
     int* arr2=(int*) malloc(sizeArr * sizeof(int));//некоторые сортировки требуют вспомогательный массив
    
-    for (int i = 0; i < sizeArr; i++)
+    for (int i = 0; i < finishSizeArr; i++)
     {
         aray[i] = rand();
     }
@@ -685,7 +688,7 @@ void shellSortTsiura(int arr[],int sizeArr)
     for (int i = 1; i < 5; i++)
     {
 
-
+      
         std::cout << "selectionSort ";
 
         for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
@@ -720,7 +723,7 @@ void shellSortTsiura(int arr[],int sizeArr)
             std::cout << duration_cast<microseconds>(end - begin).count() << " ";
         }
         std::cout << " \n";
-
+        
         std::cout << "mergesort ";
         for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
             arr = (int*)realloc(arr, sizeArr * sizeof(int));
@@ -735,7 +738,7 @@ void shellSortTsiura(int arr[],int sizeArr)
 
         }
         std::cout << " \n";
-
+        
         if (finishSizeArr <= 2800)
         {
 
