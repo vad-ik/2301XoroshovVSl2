@@ -7,6 +7,11 @@ using namespace std;
 using namespace std::chrono;
 int* aray;
 
+void swap(int &a,int &b) {
+    int tmp = a;
+   a = b;
+    b = tmp;
+};
 void say(int arr[], int sizeArr) {
     for (int i = 0; i < sizeArr; i++)
     {
@@ -30,7 +35,8 @@ void say(stack<int> stack) {
    
     for (int i = 0; i < sizeArr; i++)
     { min = arr[i];
-        for (int j = i; j < sizeArr;j++)
+    minId = i;
+        for (int j = i+1; j < sizeArr;j++)
         {
             if (min> arr[j])
             {
@@ -40,7 +46,6 @@ void say(stack<int> stack) {
         }
         arr[minId] = arr[i];
         arr[i] = min;
-
     }
 }
 
@@ -472,41 +477,7 @@ void shellSortTsiura(int arr[],int sizeArr)
  }
 
 
- // Сортируем массив `arr[low…high]`, используя вспомогательный массив `aux`
- void TimsortRecPopolam(int arr[], int aux[], int low, int high, int minRunInsert)
- {
-
-     // базовый вариант
-     if (high - low > minRunInsert) {        // если размер прогона <= 1
-
-
-
-         // найти середину
-         int mid = (low + ((high - low) >> 1));
-
-         // рекурсивно разделяем прогоны на две половины до тех пор, пока размер прогона не станет <= 1,
-         // затем объединяем их и возвращаемся вверх по цепочке вызовов
-
-         TimsortRecPopolam(arr, aux, low, mid, minRunInsert);          // разделить/объединить левую половину
-         TimsortRecPopolam(arr, aux, mid + 1, high, minRunInsert);     // разделить/объединить правую половину
-         Merge(arr, aux, low, mid, high);        // объединить два полупрогона.
-     }
-     else
-     {
-         for (int i = low; i < high; i++)
-         {
-             int temp = arr[i];
-             int j = i - 1;
-             while (j >= low && arr[j] > temp)
-             {
-                 arr[j + 1] = arr[j];
-                 j--;
-             }
-             arr[j + 1] = temp;
-         }
-     }
-
- }
+ 
 
 
  void heapify(int arr[], int n, int i)
@@ -559,42 +530,44 @@ void shellSortTsiura(int arr[],int sizeArr)
          int id = high;
          int counter = 0;
          int member;
-         for (int i = low; i <= high; i++)
+         if (step > stepTopyramidSort)
          {
-             if (arr[id] > arr[i]) {
-                 counter++;//считаем кол-во эл меньше выбранного
-             }
-         }
 
-         swap(arr[low + counter], arr[id]);//ставим выбранный элемент между меньшими и большими числами
-        
-
-         int j = low;
-         for (int i = low; i <= high; i++)//все числа меньше переставляем влево, все больше вправо
-         {
-             if (arr[low + counter] > arr[i]) {
-                 swap(arr[j], arr[i]);
-                 j++;
+             for (int i = low; i <= high; i++)
+             {
+                 if (arr[id] > arr[i]) {
+                     counter++;//считаем кол-во эл меньше выбранного
+                 }
              }
-         }
-         if (step> stepTopyramidSort)
-         {
+
+             swap(arr[low + counter], arr[id]);//ставим выбранный элемент между меньшими и большими числами
+
+
+             int j = low;
+             for (int i = low; i <= high; i++)//все числа меньше переставляем влево, все больше вправо
+             {
+                 if (arr[low + counter] > arr[i]) {
+                     swap(arr[j], arr[i]);
+                     j++;
+                 }
+             }
+
              if (counter == 0)
              {
-                 IntroSort(arr, low + counter + 1, high, step+1, stepTopyramidSort);
+                 IntroSort(arr, low + counter + 1, high, step + 1, stepTopyramidSort);
              }
              else
              {
-                 IntroSort(arr, low, low + counter - 1, step+1, stepTopyramidSort);
-                 IntroSort(arr, low + counter, high, step+1, stepTopyramidSort);
+                 IntroSort(arr, low, low + counter - 1, step + 1, stepTopyramidSort);
+                 IntroSort(arr, low + counter, high, step + 1, stepTopyramidSort);
 
              }
          }
          else//создаем 2 массива, сортируем их пирамидальной сортировкой, а потом вставляем в изначальный массив
          {
-             int* arr1eft =new int[ counter  ];
+             int* arr1eft = new int[counter];
              int j = 0;
-             for (int i = low; i < low + counter ; i++)
+             for (int i = low; i < low + counter; i++)
              {
                  arr1eft[j++] = arr[i];
              }
@@ -604,10 +577,10 @@ void shellSortTsiura(int arr[],int sizeArr)
              {
                  arrRight[j++] = arr[i];
              }
-             pyramidSort(arr1eft,  counter - 1);
-             pyramidSort(arrRight,  high- counter );
+             pyramidSort(arr1eft, counter - 1);
+             pyramidSort(arrRight, high - counter);
              j = 0;
-             for (int i = 0 ; i < low + counter; i++)
+             for (int i = 0; i < low + counter; i++)
              {
                  arr[i] = arr1eft[j++];
              }
@@ -649,7 +622,7 @@ void shellSortTsiura(int arr[],int sizeArr)
      {
          for (int i = 0; i < sizeArr; i++)
          {
-             arr[i] = sizeArr - i;
+             arr[i] = sizeArr - i-1;
          }
      }
      else if (tupe == 4)
@@ -665,218 +638,440 @@ void shellSortTsiura(int arr[],int sizeArr)
  int main()
  {
 
-    srand(time(0));
+     srand(time(0));
 
 
-    int startSizeArr = 20;//стартовый массив
-    int finishSizeArr = 200;//конечный массив
-    int sizeArr = startSizeArr;
+     int startSizeArr = 10000;//стартовый массив
+     int finishSizeArr = 100000;//конечный массив
+     int sizeArr = startSizeArr;
 
-    aray = (int*)malloc(finishSizeArr * sizeof(int));
-    int* arr=(int*) malloc(sizeArr * sizeof(int));
-    int* arr2=(int*) malloc(sizeArr * sizeof(int));//некоторые сортировки требуют вспомогательный массив
-   
-    for (int i = 0; i < finishSizeArr; i++)
-    {
-        aray[i] = rand();
-    }
+     aray = (int*)malloc(finishSizeArr * sizeof(int));
+     int* arr = (int*)malloc(sizeArr * sizeof(int));
+     int* arr2 = (int*)malloc(sizeArr * sizeof(int));//некоторые сортировки требуют вспомогательный массив
 
-
-    auto begin = steady_clock::now();
-    auto end = steady_clock::now();
-   
-    for (int i = 1; i < 5; i++)
-    {
-
-      
-        std::cout << "selectionSort ";
-
-        for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
-            arr = (int*)realloc(arr, sizeArr * sizeof(int));
-            creatSorted(arr, sizeArr, i);
-            begin = steady_clock::now();
-            selectionSort(arr, sizeArr);
-            end = steady_clock::now();
-            std::cout << duration_cast<microseconds>(end - begin).count() << " ";
-        }
-        std::cout << " \n";
-        
-        std::cout << "insertionSort ";
-        for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
-            arr = (int*)realloc(arr, sizeArr * sizeof(int));
-            creatSorted(arr, sizeArr, i);
-            begin = steady_clock::now();
-            insertionSort(arr, sizeArr);
-            end = steady_clock::now();
-            std::cout << duration_cast<microseconds>(end - begin).count() << " ";
-        }
-        std::cout << " \n";
-
-        std::cout << "bubbleSort ";
-        for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
-            arr = (int*)realloc(arr, sizeArr * sizeof(int));
-
-            creatSorted(arr, sizeArr, i);
-            begin = steady_clock::now();
-            bubbleSort(arr, sizeArr);
-            end = steady_clock::now();
-            std::cout << duration_cast<microseconds>(end - begin).count() << " ";
-        }
-        std::cout << " \n";
-        
-        std::cout << "mergesort ";
-        for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
-            arr = (int*)realloc(arr, sizeArr * sizeof(int));
-            arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
-
-            creatSorted(arr, sizeArr, i);
-            creatSorted(arr2, sizeArr, i);
-            begin = steady_clock::now();
-            mergesort(arr, arr2, 0, sizeArr - 1);
-            end = steady_clock::now();
-            std::cout << duration_cast<microseconds>(end - begin).count() << " ";
-
-        }
-        std::cout << " \n";
-        
-        if (finishSizeArr <= 2800)
-        {
+     for (int i = 0; i < finishSizeArr; i++)
+     {
+         aray[i] = rand();
+     }
 
 
-            std::cout << "quickSort ";
-            for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
-                arr = (int*)realloc(arr, sizeArr * sizeof(int));
+     auto begin = steady_clock::now();
+     auto end = steady_clock::now();
 
 
 
-                creatSorted(arr, sizeArr, i);
-                begin = steady_clock::now();
-                quickSort(arr, 0, sizeArr - 1);
-                end = steady_clock::now();
-                std::cout << duration_cast<microseconds>(end - begin).count() << " ";
 
-            }
-            std::cout << " \n";
+     for (int i = 4; i < 5; i++)
+     {
 
-            std::cout << "quickSortMedian ";
-            for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
-                arr = (int*)realloc(arr, sizeArr * sizeof(int));
+         std::cout << "selectionSort ";
 
-                creatSorted(arr, sizeArr, i);
-                begin = steady_clock::now();
-                quickSortMedian(arr, 0, sizeArr - 1);
-                end = steady_clock::now();
-                std::cout << duration_cast<microseconds>(end - begin).count() << " ";
+         for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
+             arr = (int*)realloc(arr, sizeArr * sizeof(int));
+             creatSorted(arr, sizeArr, i);
+             begin = steady_clock::now();
+             selectionSort(arr, sizeArr);
+             end = steady_clock::now();
+             std::cout << duration_cast<microseconds>(end - begin).count() << " ";
+             if (i != 4)
+             {
+                 arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                 creatSorted(arr2, sizeArr, 1);
+             }
+             else
+             {
+                 arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                 creatSorted(arr2, sizeArr, 4);
+                 shellSortDel2(arr2, sizeArr);
+             }
+             bool s = true;
+             for (int j = 0; j < sizeArr; j++)
+             {
+                 if (arr2[j] != arr[j]) {
+                     s = false;
+                 }
+             }
+             cout << (s ? "" : "NoSorted");
 
-            }
-        }
-        std::cout << " \n";
+         }
+         std::cout << " \n";
 
-        std::cout << "shellSortDel2 ";
-        for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
-            arr = (int*)realloc(arr, sizeArr * sizeof(int));
+         std::cout << "insertionSort ";
+         for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
+             arr = (int*)realloc(arr, sizeArr * sizeof(int));
+             creatSorted(arr, sizeArr, i);
+             begin = steady_clock::now();
+             insertionSort(arr, sizeArr);
+             end = steady_clock::now();
+             std::cout << duration_cast<microseconds>(end - begin).count() << " ";
+             if (i != 4)
+             {
+                 arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                 creatSorted(arr2, sizeArr, 1);
+             }
+             else
+             {
+                 arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                 creatSorted(arr2, sizeArr, 4);
+                 shellSortDel2(arr2, sizeArr);
+             }
+             bool s = true;
+             for (int j = 0; j < sizeArr; j++)
+             {
+                 if (arr2[j] != arr[j]) {
+                     s = false;
+                 }
+             }
+             cout << (s ? "" : "NoSorted");
+
+         }
+         std::cout << " \n";
+
+         std::cout << "bubbleSort ";
+         for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
+             arr = (int*)realloc(arr, sizeArr * sizeof(int));
+
+             creatSorted(arr, sizeArr, i);
+             begin = steady_clock::now();
+             bubbleSort(arr, sizeArr);
+             end = steady_clock::now();
+             std::cout << duration_cast<microseconds>(end - begin).count() << " ";
+             if (i != 4)
+             {
+                 arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                 creatSorted(arr2, sizeArr, 1);
+             }
+             else
+             {
+                 arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                 creatSorted(arr2, sizeArr, 4);
+                 shellSortDel2(arr2, sizeArr);
+             }
+             bool s = true;
+             for (int j = 0; j < sizeArr; j++)
+             {
+                 if (arr2[j] != arr[j]) {
+                     s = false;
+                 }
+             }
+             cout << (s ? "" : "NoSorted");
+
+         }
+         std::cout << " \n";
+
+         std::cout << "mergesort ";
+         for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
+             arr = (int*)realloc(arr, sizeArr * sizeof(int));
+             arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+
+             creatSorted(arr, sizeArr, i);
+             creatSorted(arr2, sizeArr, i);
+             begin = steady_clock::now();
+             mergesort(arr, arr2, 0, sizeArr - 1);
+             end = steady_clock::now();
+             std::cout << duration_cast<microseconds>(end - begin).count() << " ";
+
+             if (i != 4)
+             {
+                 arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                 creatSorted(arr2, sizeArr, 1);
+             }
+             else
+             {
+                 arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                 creatSorted(arr2, sizeArr, 4);
+                 shellSortDel2(arr2, sizeArr);
+             }
+             bool s = true;
+             for (int j = 0; j < sizeArr; j++)
+             {
+                 if (arr2[j] != arr[j]) {
+                     s = false;
+                 }
+             }
+             cout << (s ? "" : "NoSorted");
+
+         }
+         std::cout << " \n";
+
+         if (finishSizeArr <= 2800)
+         {
+
+
+             std::cout << "quickSort ";
+             for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
+                 arr = (int*)realloc(arr, sizeArr * sizeof(int));
 
 
 
-            creatSorted(arr, sizeArr, i);
-            begin = steady_clock::now();
-            shellSortDel2(arr, sizeArr);
-            end = steady_clock::now();
-            std::cout << duration_cast<microseconds>(end - begin).count() << " ";
+                 creatSorted(arr, sizeArr, i);
+                 begin = steady_clock::now();
+                 quickSort(arr, 0, sizeArr - 1);
+                 end = steady_clock::now();
+                 std::cout << duration_cast<microseconds>(end - begin).count() << " ";
+                 if (i != 4)
+                 {
+                     arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                     creatSorted(arr2, sizeArr, 1);
+                 }
+                 else
+                 {
+                     arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                     creatSorted(arr2, sizeArr, 4);
+                     shellSortDel2(arr2, sizeArr);
+                 }
+                 bool s = true;
+                 for (int j = 0; j < sizeArr; j++)
+                 {
+                     if (arr2[j] != arr[j]) {
+                         s = false;
+                     }
+                 }
+                 cout << (s ? "" : "NoSorted");
 
-        }
-        std::cout << " \n";
+             }
+             std::cout << " \n";
 
-        std::cout << "shellSortPow ";
-        for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
-            arr = (int*)realloc(arr, sizeArr * sizeof(int));
+             std::cout << "quickSortMedian ";
+             for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
+                 arr = (int*)realloc(arr, sizeArr * sizeof(int));
 
+                 creatSorted(arr, sizeArr, i);
+                 begin = steady_clock::now();
+                 quickSortMedian(arr, 0, sizeArr - 1);
+                 end = steady_clock::now();
+                 std::cout << duration_cast<microseconds>(end - begin).count() << " ";
+                 if (i != 4)
+                 {
+                     arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                     creatSorted(arr2, sizeArr, 1);
+                 }
+                 else
+                 {
+                     arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                     creatSorted(arr2, sizeArr, 4);
+                     shellSortDel2(arr2, sizeArr);
+                 }
+                 bool s = true;
+                 for (int j = 0; j < sizeArr; j++)
+                 {
+                     if (arr2[j] != arr[j]) {
+                         s = false;
+                     }
+                 }
+                 cout << (s ? "" : "NoSorted");
 
-            creatSorted(arr, sizeArr, i);
-            begin = steady_clock::now();
-            shellSortPow(arr, sizeArr);
-            end = steady_clock::now();
-            std::cout << duration_cast<microseconds>(end - begin).count() << " ";
+             }
+         }
+         std::cout << " \n";
 
-        }
-        std::cout << " \n";
-
-        std::cout << "shellSortTsiura ";
-        for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
-            arr = (int*)realloc(arr, sizeArr * sizeof(int));
-
-            creatSorted(arr, sizeArr, i);
-            begin = steady_clock::now();
-            shellSortTsiura(arr, sizeArr);
-            end = steady_clock::now();
-            std::cout << duration_cast<microseconds>(end - begin).count() << " ";
-
-        }
-        std::cout << " \n";
-
-        std::cout << "Timsort ";
-        for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
-            arr = (int*)realloc(arr, sizeArr * sizeof(int));
-            arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
-
-            creatSorted(arr, sizeArr, i);
-            creatSorted(arr2, sizeArr, i);
-            begin = steady_clock::now();
-            Timsort(arr, arr2, sizeArr, getMinRunInsert(sizeArr));
-            end = steady_clock::now();
-            std::cout << duration_cast<microseconds>(end - begin).count() << " ";
-
-        }
-        std::cout << " \n";
-
-        std::cout << "TimsortRecPopolam ";
-        for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
-            arr = (int*)realloc(arr, sizeArr * sizeof(int));
-            arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
-
-            creatSorted(arr, sizeArr, i);
-            creatSorted(arr2, sizeArr, i);
-            begin = steady_clock::now();
-            TimsortRecPopolam(arr, arr2,0, sizeArr-1, getMinRunInsert(sizeArr));
-            end = steady_clock::now();
-            std::cout << duration_cast<microseconds>(end - begin).count() << " ";
-
-        }
-        std::cout << " \n";
-
-        std::cout << "pyramidSort ";
-        for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
-            arr = (int*)realloc(arr, sizeArr * sizeof(int));
+         std::cout << "shellSortDel2 ";
+         for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
+             arr = (int*)realloc(arr, sizeArr * sizeof(int));
 
 
-            creatSorted(arr, sizeArr, i);
-            begin = steady_clock::now();
-            pyramidSort(arr, sizeArr);
-            end = steady_clock::now();
-            std::cout << duration_cast<microseconds>(end - begin).count() << " ";
 
-        }
-        std::cout << " \n";
+             creatSorted(arr, sizeArr, i);
+             begin = steady_clock::now();
+             shellSortDel2(arr, sizeArr);
+             end = steady_clock::now();
+             std::cout << duration_cast<microseconds>(end - begin).count() << " ";
+             if (i != 4)
+             {
+                 arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                 creatSorted(arr2, sizeArr, 1);
+             }
+             else
+             {
+                 arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                 creatSorted(arr2, sizeArr, 4);
+                 shellSortDel2(arr2, sizeArr);
+             }
+             bool s = true;
+             for (int j = 0; j < sizeArr; j++)
+             {
+                 if (arr2[j] != arr[j]) {
+                     s = false;
+                 }
+             }
+             cout << (s ? "" : "NoSorted");
 
-        std::cout << "IntroSort ";
-        for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
-            arr = (int*)realloc(arr, sizeArr * sizeof(int));
+         }
+         std::cout << " \n";
 
-            creatSorted(arr, sizeArr, i);
-            begin = steady_clock::now();
-            IntroSort(arr, 0, sizeArr - 1, 0, log(sizeArr));
-            end = steady_clock::now();
-            std::cout << duration_cast<microseconds>(end - begin).count() << " ";
-        }
-        std::cout << " \n";
-        std::cout << " \n";
-        std::cout << " \n";
-        std::cout << " \n";
-    }
+         std::cout << "shellSortPow ";
+         for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
+             arr = (int*)realloc(arr, sizeArr * sizeof(int));
 
-    
-    delete arr;
-    delete arr2;
-    delete aray;
 
-}
+             creatSorted(arr, sizeArr, i);
+             begin = steady_clock::now();
+             shellSortPow(arr, sizeArr);
+             end = steady_clock::now();
+             std::cout << duration_cast<microseconds>(end - begin).count() << " ";
+             if (i != 4)
+             {
+                 arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                 creatSorted(arr2, sizeArr, 1);
+             }
+             else
+             {
+                 arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                 creatSorted(arr2, sizeArr, 4);
+                 shellSortDel2(arr2, sizeArr);
+             }
+             bool s = true;
+             for (int j = 0; j < sizeArr; j++)
+             {
+                 if (arr2[j] != arr[j]) {
+                     s = false;
+                 }
+             }
+             cout << (s ? "" : "NoSorted");
+
+         }
+         std::cout << " \n";
+
+         std::cout << "shellSortTsiura ";
+         for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
+             arr = (int*)realloc(arr, sizeArr * sizeof(int));
+
+             creatSorted(arr, sizeArr, i);
+             begin = steady_clock::now();
+             shellSortTsiura(arr, sizeArr);
+             end = steady_clock::now();
+             std::cout << duration_cast<microseconds>(end - begin).count() << " ";
+             if (i != 4)
+             {
+                 arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                 creatSorted(arr2, sizeArr, 1);
+             }
+             else
+             {
+                 arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                 creatSorted(arr2, sizeArr, 4);
+                 shellSortDel2(arr2, sizeArr);
+             }
+             bool s = true;
+             for (int j = 0; j < sizeArr; j++)
+             {
+                 if (arr2[j] != arr[j]) {
+                     s = false;
+                 }
+             }
+             cout << (s ? "" : "NoSorted");
+
+         }
+         std::cout << " \n";
+
+         std::cout << "Timsort ";
+         for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
+             arr = (int*)realloc(arr, sizeArr * sizeof(int));
+             arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+
+             creatSorted(arr, sizeArr, i);
+             creatSorted(arr2, sizeArr, i);
+             begin = steady_clock::now();
+             Timsort(arr, arr2, sizeArr, getMinRunInsert(sizeArr));
+             end = steady_clock::now();
+             std::cout << duration_cast<microseconds>(end - begin).count() << " ";
+             if (i != 4)
+             {
+                 arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                 creatSorted(arr2, sizeArr, 1);
+             }
+             else
+             {
+                 arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                 creatSorted(arr2, sizeArr, 4);
+                 shellSortDel2(arr2, sizeArr);
+             }
+             bool s = true;
+             for (int j = 0; j < sizeArr; j++)
+             {
+                 if (arr2[j] != arr[j]) {
+                     s = false;
+                 }
+             }
+             cout << (s ? "" : "NoSorted");
+
+         }
+         std::cout << " \n";
+
+
+         std::cout << "pyramidSort ";
+         for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
+             arr = (int*)realloc(arr, sizeArr * sizeof(int));
+
+
+             creatSorted(arr, sizeArr, i);
+             begin = steady_clock::now();
+             pyramidSort(arr, sizeArr);
+             end = steady_clock::now();
+             std::cout << duration_cast<microseconds>(end - begin).count() << " ";
+             if (i != 4)
+             {
+                 arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                 creatSorted(arr2, sizeArr, 1);
+             }
+             else
+             {
+                 arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                 creatSorted(arr2, sizeArr, 4);
+                 shellSortDel2(arr2, sizeArr);
+             }
+             bool s = true;
+             for (int j = 0; j < sizeArr; j++)
+             {
+                 if (arr2[j] != arr[j]) {
+                     s = false;
+                 }
+             }
+             cout << (s ? "" : "NoSorted");
+
+         }
+         std::cout << " \n";
+
+         std::cout << "IntroSort ";
+         for (sizeArr = startSizeArr; sizeArr <= finishSizeArr; sizeArr += startSizeArr) {
+             arr = (int*)realloc(arr, sizeArr * sizeof(int));
+
+             creatSorted(arr, sizeArr, i);
+             begin = steady_clock::now();
+             IntroSort(arr, 0, sizeArr, 0, log(sizeArr));
+             end = steady_clock::now();
+             std::cout << duration_cast<microseconds>(end - begin).count() << " ";
+             if (i != 4)
+             {
+                 arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                 creatSorted(arr2, sizeArr, 1);
+             }
+             else
+             {
+                 arr2 = (int*)realloc(arr2, sizeArr * sizeof(int));
+                 creatSorted(arr2, sizeArr, 4);
+                 shellSortDel2(arr2, sizeArr);
+             }
+             bool s = true;
+             for (int j = 0; j < sizeArr; j++)
+             {
+                 if (arr2[j] != arr[j]) {
+                     s = false;
+                 }
+             }
+             cout << (s ? "" : "NoSorted");
+
+         }
+
+         std::cout << " \n";
+         std::cout << " \n";
+         std::cout << " \n";
+         std::cout << " \n";
+     }
+
+
+     delete arr;
+     delete arr2;
+     delete aray;
+
+ }
